@@ -59,9 +59,6 @@ impl<
     }
     pub fn process(&mut self) {
         for i in 0..MAX_NODES {
-            core::mem::swap(&mut self.nodes[i].read, &mut self.nodes[i].write)
-        }
-        for i in 0..MAX_NODES {
             if self.used[i] {
                 let mut inputs = array::from_fn(|_| None);
                 for (j, input) in self.connections[i].iter().enumerate() {
@@ -73,6 +70,9 @@ impl<
                     self.nodes[i].write = processor.process(&inputs);
                 }
             }
+        }
+        for i in 0..MAX_NODES {
+            core::mem::swap(&mut self.nodes[i].read, &mut self.nodes[i].write)
         }
     }
 
