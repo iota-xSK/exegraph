@@ -2,5 +2,10 @@
 name = "exegraph"
 version = "0.1.0"
 edition = "2021"
+authors = ["iota-xSK"]
+description = "no_std execution graph library"
+readme = "README.md"
+license = "MIT"
+keywords = ["data-structure", "graph"]
 
 [dependencies]
