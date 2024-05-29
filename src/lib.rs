@@ -113,4 +113,7 @@ impl<
     pub fn unset_edge(&mut self, to: &NodeHandle, to_sink: usize) {
         self.connections[to.0][to_sink] = None;
     }
+    pub fn get_node_output(&mut self, node: &NodeHandle) -> &[D; MAX_OUT] {
+        &self.nodes[node.0].read
+    }
 }
