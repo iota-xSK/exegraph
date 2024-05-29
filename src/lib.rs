@@ -24,7 +24,7 @@ impl<P: Processor<D, MAX_IN, MAX_OUT>, D: Default, const MAX_IN: usize, const MA
     }
 }
 
-pub trait Processor<D, const MAX_IN: usize, const MAX_OUT: usize>: Default {
+pub trait Processor<D, const MAX_IN: usize, const MAX_OUT: usize>: Default + Sized {
     fn process(&mut self, inputs: &[Option<&D>; MAX_IN]) -> [D; MAX_OUT];
 }
 
