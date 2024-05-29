@@ -7,9 +7,9 @@ pub struct Node<
     const MAX_IN: usize,
     const MAX_OUT: usize,
 > {
-    processor: Option<P>,
-    read: [D; MAX_OUT],
-    write: [D; MAX_OUT],
+    pub processor: Option<P>,
+    pub read: [D; MAX_OUT],
+    pub write: [D; MAX_OUT],
 }
 
 impl<P: Processor<D, MAX_IN, MAX_OUT>, D: Default, const MAX_IN: usize, const MAX_OUT: usize>
@@ -35,7 +35,7 @@ pub struct StaticGraph<
     const MAX_OUT: usize,
     const MAX_NODES: usize,
 > {
-    nodes: [Node<P, D, MAX_IN, MAX_OUT>; MAX_NODES],
+    pub nodes: [Node<P, D, MAX_IN, MAX_OUT>; MAX_NODES],
     used: [bool; MAX_NODES],
     connections: [[Option<(usize, usize)>; MAX_IN]; MAX_NODES],
 }
