@@ -1,5 +1,5 @@
 #![no_std]
-use core::{array, default};
+use core::array;
 
 pub struct Node<
     P: Processor<D, MAX_IN, MAX_OUT>,
@@ -7,7 +7,7 @@ pub struct Node<
     const MAX_IN: usize,
     const MAX_OUT: usize,
 > {
-    processor: P,
+    processor: Option<P>,
     read: [D; MAX_OUT],
     write: [D; MAX_OUT],
 }
@@ -15,7 +15,7 @@ pub struct Node<
 impl<P: Processor<D, MAX_IN, MAX_OUT>, D: Default, const MAX_IN: usize, const MAX_OUT: usize>
     Node<P, D, MAX_IN, MAX_OUT>
 {
-    pub fn new(processor: P) -> Self {
+    pub fn new(processor: Option<P>) -> Self {
         Self {
             processor,
             read: array::from_fn(|_| D::default()),
@@ -24,7 +24,7 @@ impl<P: Processor<D, MAX_IN, MAX_OUT>, D: Default, const MAX_IN: usize, const MA
     }
 }
 
-pub trait Processor<D, const MAX_IN: usize, const MAX_OUT: usize>: Default + Sized {
+pub trait Processor<D, const MAX_IN: usize, const MAX_OUT: usize> {
     fn process(&mut self, inputs: &[Option<&D>; MAX_IN]) -> [D; MAX_OUT];
 }
 
@@ -52,7 +52,7 @@ impl<
 {
     pub fn new() -> Self {
         Self {
-            nodes: array::from_fn(|_| Node::new(default::Default::default())),
+            nodes: array::from_fn(|_| Node::new(None)),
             used: [false; MAX_NODES],
             connections: [[None; MAX_IN]; MAX_NODES],
         }
@@ -69,7 +69,9 @@ impl<
                         inputs[j] = Some(&self.nodes[*in_node].read[*in_port]);
                     }
                 }
-                self.nodes[i].write = self.nodes[i].processor.process(&inputs);
+                if let Some(ref mut processor) = self.nodes[i].processor {
+                    self.nodes[i].write = processor.process(&inputs);
+                }
             }
         }
     }
@@ -77,7 +79,7 @@ impl<
     pub fn add_node(&mut self, processor: P) -> Option<NodeHandle> {
         for i in 0..MAX_NODES {
             if !self.used[i] {
-                self.nodes[i].processor = processor;
+                self.nodes[i].processor = Some(processor);
                 self.used[i] = true;
                 return Some(NodeHandle(i));
             }
